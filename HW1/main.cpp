@@ -4,13 +4,23 @@
 #include <string>
 using namespace std;
 
+bool isSign(char c, bool isDotIncluded){
+    if (c == ',' || c == ';' || c == ')' || c == ':' || c == '('
+        || c == '!' || c == '"' || c == '/') {
+        return true;
+    }
+    return c == '.' && isDotIncluded;
+}
+
 string findWord(const string &line, int &index) {
     string word;
     while (index < line.size() && line[index] == ' ') {
         index++;
     }
     while (index < line.size() && line[index] != ' ') {
-        word += line[index];
+        if(!isSign(line[index], false)) {
+            word += line[index];
+        }
         index++;
     }
     return word;
@@ -40,8 +50,8 @@ void processLine(const string &line, map<string, vector<int>> &words, vector<int
 
 bool equals(const string &line, int index, const string &word) {
     int startIndex = index;
-    while(index < line.size() && line[index] != ' '){
-        if(line[index] != word[index - startIndex] && line[index] != '.') {
+    while(index < line.size() && line[index] != ' ' && !isSign(line[index],true)){
+        if(line[index] != word[index - startIndex]) {
             return false;
         }
         index++;
@@ -60,11 +70,10 @@ void findSentence(const string &line, map<string, vector<int>> &words, vector<in
             ind++;
         }
         while (ind < bounds[sent + 1]){
-            while (ind < line.size() && line[ind] == ' ') {
+            while (ind < line.size() && line[ind] == ' ' || isSign(line[ind], false)) {
                 cout << line[ind];
                 ind++;
             }
-
             if (equals(line, ind, word)) {
                 while(ind < line.size() && line[ind] != ' '){
                     char c = line[ind];
