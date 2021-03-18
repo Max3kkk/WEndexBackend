@@ -1,3 +1,0 @@
-/home/michael/Documents/GitKrakenRep/S21_PSS2/HW1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/michael/Documents/GitKrakenRep/S21_PSS2/HW1/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/michael/Documents/GitKrakenRep/S21_PSS2/HW1/cmake-build-debug/CMakeFiles/HW1.dir
