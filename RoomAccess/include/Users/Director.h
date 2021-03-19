@@ -9,6 +9,7 @@
 class Director : public User{
 public:
     Director(std::string  firstName, std::string  secondName);
+    virtual std::string getUserInfo();
 };
 
 

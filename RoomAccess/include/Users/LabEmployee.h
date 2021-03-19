@@ -9,6 +9,7 @@
 class LabEmployee : public User{
 public:
     LabEmployee(std::string  firstName, std::string  secondName);
+    virtual std::string getUserInfo();
 };
 
 

@@ -5,14 +5,12 @@
 #include "../include/Controller.h"
 
 Controller::Controller() {
+    //create and add users to database
     dataBaseManager = new DataBaseManager();
-    dataBaseManager->addUser(new Director("Ivan", "Ivanov"));
-    auto a = new Admin("Sergey", "Serge");
-    a->setDataBase(dataBaseManager);
-    dataBaseManager->addUser((User*)a);
-    auto b = new Admin("Albert", "Smith");
-    b->setDataBase(dataBaseManager);
-    dataBaseManager->addUser((User*)b);
+    dataBaseManager->addUser(new Director("Kirill", "Semenikhin"));
+
+    dataBaseManager->addUser(new Admin("Anna", "Yakimova", dataBaseManager));
+    dataBaseManager->addUser(new Admin("Pavel", "Zotov", dataBaseManager));
 
     dataBaseManager->addUser(new Professor("Ivan", "Konyukhov"));
     dataBaseManager->addUser(new Professor("Manuel", "Mazzara"));
@@ -23,7 +21,7 @@ Controller::Controller() {
     dataBaseManager->addUser(new LabEmployee("Manuel", "Rodrigez"));
     dataBaseManager->addUser(new LabEmployee("Lera", "Vertash"));
     dataBaseManager->addUser(new LabEmployee("Vladislav", "Ostankovich"));
-    dataBaseManager->addUser(new LabEmployee("Mansur", "khazeev"));
+    dataBaseManager->addUser(new LabEmployee("Mansur", "Khazeev"));
     dataBaseManager->addUser(new LabEmployee("Marya", "Naumcheva"));
     dataBaseManager->addUser(new LabEmployee("Ramil", "Dautov"));
     dataBaseManager->addUser(new LabEmployee("Imre", "Delgado"));
@@ -45,177 +43,159 @@ Controller::Controller() {
     dataBaseManager->addUser(new Student("Egor", "Gorozhankin"));
     dataBaseManager->addUser(new Student("Anatoliy", "Baskakov"));
 
+    dataBaseManager->addUser(new Guest("Ruslan", "Hairov"));
+    dataBaseManager->addUser(new Guest("Vitaliy", "Koltsov"));
+    dataBaseManager->addUser(new Guest("Maksim", "Insapov"));
+    dataBaseManager->addUser(new Guest("Zamira", "Galyautdinova"));
 
-    for (int i = 203; i < 216; ++i) {
-        dataBaseManager->addRoom(new ClassRoom(i));
-    };
+    //create and add rooms to database
+    for (int i = 101; i < 110; ++i) {
+        dataBaseManager->addRoom(new LectureRoom(i%100, i/100));
+    }
+    for (int i = 110; i < 116; ++i) {
+        dataBaseManager->addRoom(new ConferenceRoom(i%100, i/100));
+    }
 
-    for (int i = 101; i < 119; ++i) {
-        dataBaseManager->addRoom(new LectureRoom(i));
-    };
+    for (int i = 201; i < 212; ++i) {
+        dataBaseManager->addRoom(new LectureRoom(i%100, i/100));
+    }
+    for (int i = 212; i < 216; ++i) {
+        dataBaseManager->addRoom(new ClassRoom(i%100, i/100));
+    }
 
     for (int i = 305; i < 314; ++i) {
-        dataBaseManager->addRoom(new ConferenceRoom(i));
-    };
-
+        dataBaseManager->addRoom(new ConferenceRoom(i%100, i/100));
+    }
     for (int i = 514; i < 523; ++i) {
-        dataBaseManager->addRoom(new Cabinet(i));
-    };
+        dataBaseManager->addRoom(new Cabinet(i%100, i/100));
+    }
 
-    dataBaseManager->addRoom(new DirectorCabinet(536));
+    dataBaseManager->addRoom(new DirectorCabinet(36, 5));
+}
+//print all users all prompt for user id
+void Controller::chooseUser(User*& ptr) {
+    std::cout << "\tHere is the list of all users:" << std::endl;
+    dataBaseManager->printUsers();
+    int id = processCommand();
+    ptr = dataBaseManager->getUser(id);
+}
+//print all rooms all prompt for room id
+void Controller::chooseRoom() {
+    std::cout << "\tHere is the list of all rooms:" << std::endl;
+    dataBaseManager->printRooms();
+    int id = processCommand();
+    curRoom = dataBaseManager->getRoom(id);
 }
 
-void Controller::readCommands() {
-    while (lastCommand != "-1") {
-        processCommand();
+// always read and process data from console
+[[noreturn]] void Controller::readConsole() {
+    while (true) {
+        processConsole();
     }
 }
 
-void Controller::processCommand() {
-    if (curUser != nullptr) {
-        if (instanceOf<Admin>(curUser)) {
-            if (chosenUser == nullptr) {
-                std::cout << "You are an admin (you can choose anyone to grant access or banning)";
-                chooseUser(chosenUser);
-            } else if (chosenRoom == nullptr){
-                std::cout << "You are an admin, you've chosen: " << curUser->getFirstName() << " " << curUser->getSecondName() << " (to  to grant access or ban) ";
-                chooseRoom(chosenRoom);
-            } else {
-                if (lastCommand != "d" && lastCommand != "g") {
-                    std::cout << R"(To grant access type "g", to ban person for this room "b",
-                    to finish program "-1", to return to beginning "-2")"<< std::endl;
-                    std::cin >> lastCommand;
-                }
-                if (lastCommand == "b") {
-                    ((Admin*)curUser)->denyAccess(chosenUser->getId(), chosenRoom->getId());
-                    std::cout << "You successfully banned room#" << chosenRoom->getId() <<
-                    " for " << curUser->getFirstName() << " " << curUser->getSecondName() << std::endl;
-                    reset();
-                } else if (lastCommand == "g") {
-                    ((Admin*)curUser)->grantAccess(chosenUser->getId(), chosenRoom->getId());
-                    std::cout << "You successfully granted access to room#" << chosenRoom->getId() <<
-                              " for " << curUser->getFirstName() << " " << curUser->getSecondName() << std::endl;
-                    reset();
-                }
-            }
-        } else { //if we are not an admins and we want to choose a room to book or discard booking
-            if (chosenRoom == nullptr){
-                std::cout << "You are " << curUser->getFirstName() << " " << curUser->getSecondName()
-                <<", you can choose room to book or discard yor booking)";
-                chooseRoom(chosenRoom);
-            } else {
-                if (chosenRoom->isBooked() && chosenRoom->getCurUserId() != curUser->getId() || (!chosenRoom->isBooked() && !dataBaseManager->canBook(curUser, chosenRoom))) {
-                    std::cout << "Sorry " << curUser->getFirstName() << " " << curUser->getSecondName()
-                    << " access to this room is denied. You should choose another room" << std::endl;
-                    chosenRoom = nullptr;
-                }
-                std::cout << "last";
-                if (lastCommand != "d" && lastCommand != "b") {
-                    std::cout << R"(To book this room type "b", to discard booking "d",
-                    to finish program "-1", to return to beginning "-2")" << std::endl;
-                    std::cin >> lastCommand;
-                    if (lastCommand == "-2") {
+// all main console logic is here
+// depending on what user or room you chose there is different logic for each
+void Controller::processConsole() {
+    if (curUser == nullptr) {   //no users are chosen
+        std::cout << "\t[God Mode] (you can choose to be anyone, even an admin) " << std::endl;
+        chooseUser(curUser);
+        return;
+    } else {    //if we've chosen a user "control"
+        //get info from user to define if its an admin
+        std::string userType = curUser->getUserInfo().substr(0, curUser->getUserInfo().find(" "));
+        transform(userType.begin(), userType.end(), userType.begin(), tolower);
+        if (userType == "admin") {  // admin:
+            if (userChosenByAdmin != nullptr) { // admin: ban or grant access to currently chosen user
+                if (curRoom == nullptr) { // admin: if the room is not chosen
+                    std::cout << "\tYou are " << curUser->getUserInfo() << std::endl;
+                    std::cout << " You have to choose a room to change an access" << std::endl;
+                    chooseRoom();
+                } else {    // admin: chose ban/grant access or to access some room
+                    std::cout << "\tYou are " << curUser->getUserInfo() << std::endl;
+                    std::cout << "\n -to ban chosen user for some room type \"-5\""
+                                 "\n -to grant access to user to some room type \"-10\"" << std::endl;
+                    int com = processCommand();
+                    if (com == 1) {    // admin: ban user
+                        ((Admin *) curUser)->denyAccess(userChosenByAdmin->getId(), curRoom->getId());
+                        std::cout << "\tYou successfully baned room#" << curRoom->getId() <<
+                                  " for " << curUser->getUserInfo() << std::endl;
+                        reset();
+                    } else if (com == 2) {     // admin: grant access to user
+                        ((Admin *) curUser)->grantAccess(userChosenByAdmin->getId(), curRoom->getId());
+                        std::cout << "\tYou successfully granted access to room#" << curRoom->getId() <<
+                                  " for " << curUser->getUserInfo() << std::endl;
                         reset();
                     }
                 }
-                if (lastCommand == "d") {
-                    if(chosenRoom->getCurUserId() != curUser->getId()) {
-                        lastCommand = "";
-                        std::cout << "You cannot discard booking of this room" << std:: endl;
-                    }
-                    chosenRoom->discardBooking();
-                    std::cout << "You successfully discarded booking" << std::endl;
-                    reset();
-                    return;
-                } else if (lastCommand == "b"){
-                    chosenRoom->book(curUser->getId());
-                    std::cout << "You successfully booked the room #" << chosenRoom->getNumber() << std::endl;
-                    reset();
+            } else if (curRoom != nullptr) {    // admin: try to access currently chosen room
+                tryAccess();
+            } else {    // admin: choose something to do
+                std::cout << "\tYou are " << curUser->getUserInfo() <<
+                          "\n -to choose a room to access type \"-5\""
+                          "\n -to choose a user for granting access or banning type \"-10\"" << std::endl;
+                int com = processCommand();
+                if (com == 1) {     // admin: choose a room to access
+                    chooseRoom();
+                } else if (com == 2) { // admin: choose a user to grant access/ban
+                    chooseUser(userChosenByAdmin);
                 }
             }
+        } else {// user: access some room
+            tryAccess();
         }
-    } else {
-        std::cout << "[It is the \"God Mode\"] (you can choose to be anyone, even an admin) ";
-        chooseUser(curUser);
     }
-
 }
 
-template<typename Base, typename T>
-bool Controller::instanceOf(const T *ptr) {
-    return (dynamic_cast<const Base*>(ptr) != nullptr);
-}
-
-void Controller::chooseUser(User*& ptr) {
-    std::cout << "Here is the list of all users:" << std::endl;
-    for (User* u : dataBaseManager->getUsers()) {
-        std::string type{};
-        if (instanceOf<Student>(u)) {
-            type = "student";
-        } else if (instanceOf<LabEmployee>(u)) {
-            type = "lab employee";
-        } else if (instanceOf<Professor>(u)) {
-            type = "professor";
-        } else if (instanceOf<Director>(u)) {
-            type = "director";
-        } else if (instanceOf<Admin>(u)) {
-            type = "admin";
+// choose and access some room
+void Controller::tryAccess(){
+    if (curRoom == nullptr){    // if no room is chosen
+        std::cout << "\tYou are " << curUser->getUserInfo() << std::endl;
+        std::cout << "\tChoose a room to access" << std::endl;
+        chooseRoom();
+    } else {    // we've chosen some room
+        if (curRoom->isAccessible(curUser->getId(), curUser->getAccessLevel()) || isEmergency) {
+            std::cout << "\tYou successfully accessed " << curRoom->getRoomInfo() << std::endl;
+        } else {    // we cannot access room
+            std::cout << "\tYou cannot access " << curRoom->getRoomInfo() << std::endl;
         }
-        std::cout << "id: " << u->getId() << " " << type << " " << u->getSecondName() << " " << u->getFirstName() << std:: endl;
-    }
-    std::cout << "You can finish the program by typing \"-1\" or \"-2\" if you want to return to return to the beginning"
-                 "\nWrite an id of the user you want to choose: ";
-    int id;
-    std:: cin >> id;
-    std::cout << std::endl;
-    lastCommand = std::to_string(id);
-    if (lastCommand == "-2") {
         reset();
-    } else if (dataBaseManager->hasUser(id)) {
-        ptr = dataBaseManager->getUser(id);
     }
 }
 
-void Controller::chooseRoom(Room*& ptr) {
-    std::cout << "Here is the list of all rooms:" << std::endl;
-    for (auto r : dataBaseManager->getRooms()) {
-        std::string type{};
-        if (instanceOf<ClassRoom>(r)) {
-            type = "class room";
-        } else if (instanceOf<LectureRoom>(r)) {
-            type = "lecture room";
-        } else if (instanceOf<ConferenceRoom>(r)) {
-            type = "conference room";
-        } else if (instanceOf<Cabinet>(r)) {
-            type = "cabinet";
-        } else if (instanceOf<DirectorCabinet>(r)) {
-            type = "director cabinet";
-        }
-        std::cout << "id: " << r->getId() << " " << type << " #" << r->getNumber();
-        if (r->isBooked()) {
-            auto booker = dataBaseManager->getUser(r->getCurUserId());
-            std::cout << " Booked by: " << booker->getFirstName() << " " << booker->getSecondName();
-        }
-        std::cout << std::endl;
-    }
-    std::cout << "You can finish the program by typing \"-1\" or \"-2\" if you want to return to return to the beginning"
-                 "\nWrite an id of the room you want to choose: ";
-    int id;
-    std::cin >> id;
-    std::cout << std::endl;
-    lastCommand = std::to_string(id);
-    if (lastCommand == "-2") {
-        reset();
-    } else if (dataBaseManager->hasRoom(id)) {
-        ptr = dataBaseManager->getRoom(id);
-    }
-}
-
-void Controller::reset() {
-    lastCommand = "-2";
+// resets back to a [God Mode], but keeps Emergency running
+void Controller::reset(){
     curUser = nullptr;
-    lastCommand = "";
-    chosenUser = nullptr;
-    chosenRoom = nullptr;
+    userChosenByAdmin = nullptr;
+    curRoom = nullptr;
+}
+
+// read inputs from console and processes it
+int Controller::processCommand() {
+    if (isEmergency) {
+        std::cout << " AAAAAAAAAAAAA, there is a SUS among us, all rooms are open, Emergency!!!" << std::endl;
+    }
+    std::cout << " -to finish the program type \"-1\""
+                 "\n -to return to God Mode type \"-2\""
+                 "\n -to toggle an emergency type \"-404\"" << std::endl;
+    std::cin >> curCommand;
+    switch (curCommand) {
+        case -1:
+            exit(0);
+        case -2:
+            isEmergency = false;
+            reset();
+            break;
+        case -5:
+            return 1;
+        case -10:
+            return 2;
+        case -404:
+            isEmergency = !isEmergency;
+            break;
+        default:
+            return curCommand;
+    }
+    return 0;
 }
 

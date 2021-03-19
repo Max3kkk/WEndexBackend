@@ -5,7 +5,7 @@
 #ifndef ROOMACCESS_USER_H
 #define ROOMACCESS_USER_H
 #include <string>
-#include "AccessLevel.h"
+#include "../AccessLevel.h"
 
 
 class User {
@@ -20,10 +20,9 @@ public:
     virtual int getId() const;
     virtual const std::string &getSecondName() const;
     virtual AccessLevel getAccessLevel() const;
+    virtual std::string getUserInfo();
     //User constructors
-    User() = delete;
     User(std::string  firstName, std::string  secondName);
-
 };
 
 

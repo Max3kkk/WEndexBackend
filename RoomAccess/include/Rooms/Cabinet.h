@@ -8,7 +8,8 @@
 
 class Cabinet : public Room{
 public:
-    Cabinet(int number);
+    Cabinet(int number, int floor);
+    virtual std::string getRoomInfo();
 };
 
 

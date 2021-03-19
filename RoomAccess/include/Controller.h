@@ -6,37 +6,42 @@
 #define ROOMACCESS_CONTROLLER_H
 #include "iostream"
 #include "DataBaseManager.h"
-#include "User.h"
-#include "Student.h"
-#include "LabEmployee.h"
-#include "Director.h"
-#include "Professor.h"
-#include "Admin.h"
-#include "Room.h"
-#include "Cabinet.h"
-#include "ClassRoom.h"
-#include "ConferenceRoom.h"
-#include "LectureRoom.h"
-#include "DirectorCabinet.h"
+#include "Users/User.h"
+#include "Users/Student.h"
+#include "Users/LabEmployee.h"
+#include "Users/Director.h"
+#include "Users/Professor.h"
+#include "Users/Admin.h"
+#include "Users/Guest.h"
+#include "Rooms/Room.h"
+#include "Rooms/Cabinet.h"
+#include "Rooms/ClassRoom.h"
+#include "Rooms/ConferenceRoom.h"
+#include "Rooms/LectureRoom.h"
+#include "Rooms/DirectorCabinet.h"
 #include "vector"
 #include "string"
 
 class Controller {
 private:
-    std::string lastCommand{};
+    int curCommand{};
     User* curUser = nullptr;
-    User* chosenUser = nullptr;
-    Room* chosenRoom = nullptr;
+    User* userChosenByAdmin = nullptr;
+    Room* curRoom = nullptr;
     DataBaseManager* dataBaseManager{};
+    bool isEmergency{false};
     void reset();
 public:
     Controller();
-    void processCommand();
-    void readCommands();
-    template<typename Base, typename T>
-    bool instanceOf(const T *ptr);
+    //void processCommand();
+    //void readCommands();
+    int processCommand();
+
+    [[noreturn]] void readConsole();
     void chooseUser(User*& ptr);
-    void chooseRoom(Room*& ptr);
+    void chooseRoom();
+    void processConsole();
+    void tryAccess();
 };
 
 
