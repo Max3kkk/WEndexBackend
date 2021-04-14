@@ -8,7 +8,8 @@
 
 class ConferenceRoom : public Room{
 public:
-    ConferenceRoom(int number);
+    ConferenceRoom(int number, int floor);
+    virtual std::string getRoomInfo();
 };
 
 

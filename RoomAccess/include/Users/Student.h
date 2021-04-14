@@ -9,6 +9,7 @@
 class Student : public User{
 public:
     Student(std::string  firstName, std::string  secondName);
+    virtual std::string getUserInfo();
 };
 
 

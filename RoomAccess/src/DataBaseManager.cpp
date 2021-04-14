@@ -2,8 +2,10 @@
 // Created by michael on 3/7/21.
 //
 
+#include <iostream>
 #include "../include/DataBaseManager.h"
 
+// return a room by its id
 Room* DataBaseManager::getRoom(int roomId) {
     for (auto room : rooms) {
         if (room->getId() == roomId) {
@@ -12,7 +14,7 @@ Room* DataBaseManager::getRoom(int roomId) {
     }
     return nullptr;
 }
-
+// return a user by its id
 User* DataBaseManager::getUser(int userId) {
     for (User* user : users) {
         if (user->getId() == userId) {
@@ -21,7 +23,7 @@ User* DataBaseManager::getUser(int userId) {
     }
     return nullptr;
 }
-
+// checks if DB has a user
 bool DataBaseManager::hasUser(int userId) {
     for (auto user : users) {
         if (user->getId() == userId) {
@@ -31,6 +33,7 @@ bool DataBaseManager::hasUser(int userId) {
     return false;
 }
 
+// checks if DB has a room
 bool DataBaseManager::hasRoom(int roomId) {
     for (auto room : rooms) {
         if (room->getId() == roomId) {
@@ -52,21 +55,23 @@ void DataBaseManager::addUser(User *user) {
     }
 }
 
-const std::vector<User *> &DataBaseManager::getUsers() const {
-    return users;
+// prints information of all user to console
+void DataBaseManager::printUsers() {
+    for (auto user : users) {
+        std::cout << user->getUserInfo() << std::endl;
+    }
 }
 
-const std::vector<Room *> &DataBaseManager::getRooms() const {
-    return rooms;
+// prints information of all rooms to console
+void DataBaseManager::printRooms() {
+    for (auto room : rooms) {
+        std::cout << room->getRoomInfo() << std::endl;
+    }
 }
 
-bool DataBaseManager::canBook(int userId, int roomId) {
+// checks if user's & room's ids are valid and user can access room
+bool DataBaseManager::canAccess(int userId, int roomId) {
     auto user = getUser(userId);
     auto room = getRoom(roomId);
-    return user != nullptr && room != nullptr && (user->getAccessLevel() >= room->getAccessLevel() || room->isInWhiteList(userId));
+    return hasUser(userId) && hasRoom(roomId) && room->isAccessible(userId, user->getAccessLevel());
 }
-
-bool DataBaseManager::canBook(User* user, Room* room) {
-    return user != nullptr && room != nullptr && (user->getAccessLevel() >= room->getAccessLevel() || room->isInWhiteList(user->getId()));
-}
-

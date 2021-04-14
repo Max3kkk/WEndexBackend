@@ -8,7 +8,8 @@
 
 class DirectorCabinet : public Room{
 public:
-    DirectorCabinet(int number);
+    explicit DirectorCabinet(int number, int floor);
+    virtual std::string getRoomInfo();
 };
 
 

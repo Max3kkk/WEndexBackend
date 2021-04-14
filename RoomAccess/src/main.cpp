@@ -3,6 +3,6 @@
 
 int main() {
     Controller cr;
-    cr.readCommands();
+    cr.readConsole();
     return 0;
 }
