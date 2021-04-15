@@ -10,7 +10,7 @@
 using namespace std;
 
 enum DriverStatus{
-    NotWorking, Available, Busy, Driving
+    NotWorking, Available, Driving
 };
 
 class Driver {

@@ -45,7 +45,7 @@ public:
     string number{};
     int freeBottleOfWater = 0;
 
-    inline Car(int model=Seven, int type=Economy, int location = Chernobyl, int color = Cherry, string number = "AAA228AAA", int freeBottleOfWater = rand() % 5 + 1)
+    inline Car(int model=Seven, int type=Economy, int location = Chernobyl, int color = Cherry, string number = "AAA228AAA", int freeBottleOfWater = 0)
             : model(model), type(type), location(location), color(color), number(move(number)),
               freeBottleOfWater(freeBottleOfWater) {
         if(type != Comfort) {

@@ -23,18 +23,17 @@ public:
 
     Car UpgradeCar(int driverId, int model, int type, int location, int color, string number);
 
-    vector<Order> SeeAvailableOrders(int driverId);
     vector<Order> SeeOrderHistory(int driverId);
 
     Car SeeCar(int driverId);
-
-    void ChangeStatus(int status);
 
     int ChangeStatus(int driverId, int status);
 
     vector<Order> FindAvailableOrders(int driverId);
 
     void GetOrder(int driverId, int OrderId);
+
+    void doAvailableOrder(int driverId);
 };
 
 

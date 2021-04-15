@@ -20,4 +20,23 @@ class WrongLoginOrPassword: public exception {
         return "Login or Password is incorrect.";
     }
 };
+
+class OrderIsNotAvailable: public exception {
+    virtual const char* what() const throw() {
+        return "Driver cannot take the order";
+    }
+};
+
+class LocationIsNotSpecified: public exception {
+    virtual const char* what() const throw() {
+        return "There is no current rides to specify the location";
+    }
+};
+
+class HasNoSuchPaymentMethod: public exception {
+    virtual const char* what() const throw() {
+        return "Passenger has no such payment method";
+    }
+};
+
 #endif //WENDEX_EXEPTIONS_H
