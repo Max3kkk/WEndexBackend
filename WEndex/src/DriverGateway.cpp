@@ -22,7 +22,64 @@ Driver DriverGateway::Login(const string& login, const string& password) {
     return vec[0];
 }
 
-Car DriverGateway::ChangeCar(int driverId, int model=Seven, int type=Economy, int location = Chernobyl, int color = Cherry, string number = "AAA228AAA"){
+Car DriverGateway::UpgradeCar(int driverId, int model=Seven, int type=Economy, int location = Chernobyl, int color = Cherry, string number = "AAA228AAA"){
     auto dr = st.get<Driver>(driverId);
+    auto car = st.get<Car>(dr.carId);
+    car.location = location;
+    car.model = model;
+    car.type = type;
+    car.color - color;
+    car.number = number;
+    st.update(car);
+    return car;
+}
 
+vector<Order> DriverGateway::FindAvailableOrders(int driverId) {
+    auto orders = st.get_all<Order>(where(c(&Order::driverId) == driverId) && (c(&Order::status) == (int)LookingForDriver));
+    for (auto o : orders) {
+        cout << st.dump(o);
+    }
+    return orders;
+}
+
+vector<Order> DriverGateway::SeeOrderHistory(int driverId) {
+    auto orders = st.get_all<Order>(where(c(&Order::driverId) == driverId) && c(&Order::status) == (int)Finished);
+    for (auto o : orders) {
+        cout << st.dump(o);
+    }
+    return orders;
+}
+
+Car DriverGateway::SeeCar(int driverId){
+    auto dr = st.get<Driver>(driverId);
+    auto car = st.get<Car>(dr.carId);
+    cout << st.dump(car);
+    cout << "Status of driver " << dr.name << " changed car" << endl;
+    return car;
+}
+
+int DriverGateway::ChangeStatus(int driverId, int status) {
+    auto dr = st.get<Driver>(driverId);
+    dr.status = status;
+    st.update(dr);
+    cout << "Status of driver " << dr.name << " is now << dr.status" << endl;
+    return dr.status;
+}
+
+void DriverGateway::GetOrder(int driverId, int orderId){
+    auto dr = st.get<Driver>(driverId);
+    auto car = st.get<Car>(dr.carId);
+    auto ord = st.get<Order>(orderId);
+    if (ord.status != LookingForDriver && dr.status != Available) {
+        throw OrderIsNotAvailable();
+    }
+
+    ChangeStatus(driverId, Driving);
+    ord.status = WaitingForDriverArrival;
+    car.drive(ord.fromAddress);
+    st.update(car);
+    st.update(ord);
+    cout << "The ride has began, take your seat." << endl;
+    ord.status = InProgress;
+    o
 }

@@ -12,16 +12,16 @@ enum OrderStatusType {
 class Order {
 public:
     int id{-1};
-    double costDollars;
-    int timeMinutes;
-    int fromAddress;
-    int toAddress;
-    int passengerId;
-    int driverId;
+    double costDollars{100000};
+    int timeMinutes{-1};
+    int fromAddress{Chernobyl};
+    int toAddress{Innopolis};
+    int passengerId{-1};
+    int driverId{-1};
     int paymentMethod{Cash};
-    OrderStatusType status{LookingForDriver};
+    int status{LookingForDriver};
 
-    Order(int id, int fromAddress, int toAddress, int passengerId, int driverId) : id(id), fromAddress(fromAddress),
+    Order(int id = -1, int fromAddress = Chernobyl, int toAddress = Innopolis, int passengerId = -1, int driverId = -1) : id(id), fromAddress(fromAddress),
     toAddress(toAddress), passengerId(passengerId), driverId(driverId) {
         timeMinutes = abs(fromAddress - toAddress) * 30;
         costDollars = double(timeMinutes) * 1.56;

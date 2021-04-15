@@ -12,6 +12,7 @@
 #include "iostream"
 #include "Driver.h"
 #include "vector"
+#include "Order.h"
 #include "Exeptions.h"
 
 
@@ -20,7 +21,20 @@ public:
     void Register(const string& name, const string& login, const string& password);
     Driver Login(const string& login, const string& password);
 
-    Car ChangeCar(int driverId, int model, int type, int location, int color, string number);
+    Car UpgradeCar(int driverId, int model, int type, int location, int color, string number);
+
+    vector<Order> SeeAvailableOrders(int driverId);
+    vector<Order> SeeOrderHistory(int driverId);
+
+    Car SeeCar(int driverId);
+
+    void ChangeStatus(int status);
+
+    int ChangeStatus(int driverId, int status);
+
+    vector<Order> FindAvailableOrders(int driverId);
+
+    void GetOrder(int driverId, int OrderId);
 };
 
 

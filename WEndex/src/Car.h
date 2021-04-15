@@ -17,7 +17,7 @@ ComfortPlus, Business
 };
 
 enum LocationType {
-    Chernobyl, Moscow, Berlin, Sydney, Kazan, NewYork, Paris, London
+    Chernobyl, Moscow, Berlin, Sydney, Kazan, NewYork, Paris, London, Innopolis
 };
 
 enum ColorType{
