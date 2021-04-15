@@ -14,8 +14,9 @@ enum paymentMethodType {
 };
 
 struct PaymentMethod{
-    int type;
-    int passengerId;
+    int id{-1};
+    int type{-1};
+    int passengerId{-1};
 };
 
 

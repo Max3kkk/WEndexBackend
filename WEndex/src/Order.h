@@ -11,7 +11,7 @@ enum OrderStatusType {
 
 class Order {
 public:
-    int id;
+    int id{-1};
     double costDollars;
     int timeMinutes;
     int fromAddress;

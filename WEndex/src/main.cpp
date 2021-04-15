@@ -1,51 +1,35 @@
-#include <sqlite_orm/sqlite_orm.h>
-
-#include <string>
-#include <iostream>
-#include <cassert>
 #include "cstdlib"
 #include "ctime"
-#include "Car.h"
+#include "DataBase.h"
+#include "PassengerGateway.h"
+#include "Passenger.h"
+#include "DriverGateway.h"
+#include <sqlite_orm/sqlite_orm.h>
 
+using namespace std;
 using namespace sqlite_orm;
+#define st DataBase::Storage
 
-using std::cout;
-using std::endl;
+void ClearStorage(){
+    st.remove_all<Driver>();
+    st.remove_all<Car>();
+    st.remove_all<Passenger>();
+    st.remove_all<Order>();
+    st.remove_all<PaymentMethod>();
+}
 
-struct RapArtist {
-    int id;
-    std::string name;
-};
-
-int main(int, char **) {
+int main() {
     srand(std::time(nullptr));  //for better rand()
+    st.sync_schema();
+    PassengerGateway pg;
+    DriverGateway dg;
 
+    ClearStorage();
 
-    auto storage = make_storage(":memory:",
-                                make_table("rap_artists",
-                                           make_column("id", &RapArtist::id, primary_key()),
-                                           make_column("name", &RapArtist::name)));
-    cout << "in memory db opened" << endl;
-    storage.sync_schema();
+    dg.Register("Ivan Konyukhov", "Lapochka", "12345Drop");
+    dg.Login("Lapochka", "12345Drop");
 
-    assert(!storage.count<RapArtist>());
-
-    storage.insert(RapArtist{-1, "The Weeknd"});
-
-    storage.transaction([&] {
-        storage.insert(RapArtist{-1, "Drake"});
-        return true;
-    });
-
-    cout << "rap artists count = " << storage.count<RapArtist>() << endl;
-
-    //  transaction also work in memory..
-    storage.transaction([&] {
-        storage.insert(RapArtist{-1, "Kanye West"});
-        return false;
-    });
-
-    cout << "rap artists count = " << storage.count<RapArtist>() << " (no Kanye)" << endl;
+    //ge.sync_schema();
 
     return 0;
 }

@@ -23,6 +23,7 @@ public:
     string login;
     string password;
     inline Driver(string name, string login, string password, int carId) : name(move(name)), login(move(login)), password(move(password)), carId(carId) {}
+    inline Driver() = default;
 };
 
 

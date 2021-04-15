@@ -20,19 +20,38 @@ enum LocationType {
     Chernobyl, Moscow, Berlin, Sydney, Kazan, NewYork, Paris, London
 };
 
+enum ColorType{
+    Red, Black, Cherry, Blue, White, Cold
+};
+enum ModelType{
+    MercedesBenz,
+    Toyota,
+    Volkswagen,
+    BMW,
+    Porsche,
+    Honda,
+    Ford,
+    Nissan,
+    Seven
+};
+
 class Car {
 public:
-    int id{};
-    string model{};
+    int id{-1};
+    int model{Seven};
     int type{Economy};
-    int location;
-    string color{};
+    int location{Chernobyl};
+    int color{Cherry};
     string number{};
-    int freeBottleOfWater = rand() % 5 + 1;
+    int freeBottleOfWater = 0;
 
-    inline Car(string model, int type, int location, string color, string number, int freeBottleOfWater)
-            : model(std::move(model)), type(type), location(location), color(std::move(color)), number(std::move(number)),
-              freeBottleOfWater(freeBottleOfWater) {}
+    inline Car(int model=Seven, int type=Economy, int location = Chernobyl, int color = Cherry, string number = "AAA228AAA", int freeBottleOfWater = rand() % 5 + 1)
+            : model(model), type(type), location(location), color(color), number(move(number)),
+              freeBottleOfWater(freeBottleOfWater) {
+        if(type != Comfort) {
+            freeBottleOfWater = 0;
+        }
+    }
 
     void drive(int to);
 private:

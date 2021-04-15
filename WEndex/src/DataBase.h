@@ -8,6 +8,7 @@
 #include "Passenger.h"
 #include "Driver.h"
 #include "Order.h"
+#include "Exeptions.h"
 
 using namespace std;
 using namespace sqlite_orm;
@@ -26,34 +27,34 @@ inline auto InitializeStorage() {
                                    make_column("id", &Passenger::id),
                                    make_column("name", &Passenger::name),
                                    make_column("rating", &Passenger::rating),
-                                   make_column("login", &Passenger::login)),
-                                   make_column("password", &Passenger::password)),
-                        make_table("Orders",
-                                   make_column("id", &Order::id, autoincrement(), primary_key()),
-                                   make_column("costDollars", &Order::costDollars),
-                                   make_column("fromAddress", &Order::fromAddress),
-                                   make_column("toAddress", &Order::toAddress),
-                                   make_column("timeMinutes", &Order::timeMinutes),
-                                   make_column("passengerId", &Order::passengerId),
-                                   make_column("driverId", &Order::driverId),
-                                   make_column("paymentMethod", &Order::paymentMethod)),
-                        make_table("PaymentMethods",
-                                   make_column("type", &PaymentMethod::type),
-                                   make_column("passengerId", &PaymentMethod::passengerId)),
-                        make_table("Cars",
-                                   make_column("id", &Car::id),
-                                   make_column("model", &Car::model),
-                                   make_column("type", &Car::type),
-                                   make_column("location", &Car::location),
-                                   make_column("color", &Car::color),
-                                   make_column("number", &Car::number),
-                                   make_column("freeBottleOfWater", &Car::freeBottleOfWater));
-
+                                   make_column("login", &Passenger::login),
+                        make_column("password", &Passenger::password)),
+            make_table("Orders",
+                       make_column("id", &Order::id, autoincrement(), primary_key()),
+                       make_column("costDollars", &Order::costDollars),
+                       make_column("fromAddress", &Order::fromAddress),
+                       make_column("toAddress", &Order::toAddress),
+                       make_column("timeMinutes", &Order::timeMinutes),
+                       make_column("passengerId", &Order::passengerId),
+                       make_column("driverId", &Order::driverId),
+                       make_column("paymentMethod", &Order::paymentMethod)),
+            make_table("PaymentMethods",
+                       make_column("id", &PaymentMethod::id, autoincrement(), primary_key()),
+                       make_column("type", &PaymentMethod::type),
+                       make_column("passengerId", &PaymentMethod::passengerId)),
+            make_table("Cars",
+                       make_column("id", &Car::id, autoincrement(), primary_key()),
+                       make_column("model", &Car::model),
+                       make_column("type", &Car::type),
+                       make_column("location", &Car::location),
+                       make_column("color", &Car::color),
+                       make_column("number", &Car::number),
+                       make_column("freeBottleOfWater", &Car::freeBottleOfWater)));
 }
 
 class DataBase {
-    inline auto static Storage = InitializeStorage();
+public:
+    inline static auto Storage = InitializeStorage();
 };
-
 
 #endif //WENDEX_DATABASE_H
