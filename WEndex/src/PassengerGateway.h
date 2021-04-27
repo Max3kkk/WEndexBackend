@@ -1,5 +1,5 @@
 //
-// Created by michael on 4/14/21.
+// Created by michael on
 //
 
 #ifndef WENDEX_PASSENGERGATEWAY_H
@@ -13,6 +13,7 @@
 #include "vector"
 #include "Order.h"
 #include "Exeptions.h"
+
 
 class PassengerGateway {
 public:
@@ -34,11 +35,27 @@ public:
 
     Order makeOrder(int passengerId, int paymentType, int carType, int from, int to);
 
-    void changePaymentType(int passengerId, int paymentType);
+    void switchPaymentType(int passengerId, int paymentType);
 
     int printCurrentCoordinates(int passengerId);
 
     double askForBill(int passengerId);
+
+    bool CheckBlockedMethod(int passengerId, int type);
+
+    bool CanAddPaymentMethod(int passengerId);
+
+    bool CanRemovePaymentMethod(int passengerId);
+
+    bool CanMakeOrder(int passengerId);
+
+    bool CanAskForBill(int passengerId);
+
+    void SwitchDevice(int passengerId, int deviceId);
+
+    Device addDevice(int passengerId, int OS, string name);
+
+    void removeDevice(int passengerId, int deviceId);
 };
 
 

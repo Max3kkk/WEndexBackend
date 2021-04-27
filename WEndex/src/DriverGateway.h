@@ -21,8 +21,6 @@ public:
     void Register(const string& name, const string& login, const string& password);
     Driver Login(const string& login, const string& password);
 
-    Car UpgradeCar(int driverId, int model, int type, int location, int color, string number);
-
     vector<Order> SeeOrderHistory(int driverId);
 
     Car SeeCar(int driverId);
@@ -33,7 +31,21 @@ public:
 
     void GetOrder(int driverId, int OrderId);
 
-    void doAvailableOrder(int driverId);
+    void doRandomAvailableOrder(int driverId);
+
+    Car UpgradeCar(int driverId, int model, int type, int color);
+
+    bool CarValid(int driverId);
+
+    bool CanAcceptRide(int driverId);
+
+    bool CanUpgradeCar(int driverId);
+
+    bool CanFindAvailableOrders(int driverId);
+
+    Car AddNewCar(int driverId, int model, int type, int color);
+
+    Car SwitchCar(int driverId, int carId);
 };
 
 

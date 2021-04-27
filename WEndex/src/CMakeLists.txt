@@ -1,4 +1,4 @@
-add_executable(WEndex DataBase.h PassengerGateway.cpp PassengerGateway.h DriverGateway.cpp DriverGateway.h Driver.h Passenger.h Order.h Car.cpp Car.h Exeptions.h)
+add_executable(WEndex DataBase.h PassengerGateway.cpp PassengerGateway.h DriverGateway.cpp DriverGateway.h Driver.h Passenger.h Order.h Car.cpp Car.h Exeptions.h Device.h Admin.cpp Admin.h AdminGateway.cpp AdminGateway.h)
 target_link_libraries(WEndex PRIVATE sqlite_orm::sqlite_orm)
 
 target_sources(WEndex 

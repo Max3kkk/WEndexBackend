@@ -5,7 +5,6 @@
 #ifndef WENDEX_CAR_H
 #define WENDEX_CAR_H
 #include <utility>
-
 #include "vector"
 #include "string"
 #include "iostream"
@@ -21,7 +20,7 @@ enum LocationType {
 };
 
 enum ColorType{
-    Red, Black, Cherry, Blue, White, Cold
+    Red, Black, Cherry, Blue, White, Gold
 };
 enum ModelType{
     MercedesBenz,
@@ -39,22 +38,19 @@ class Car {
 public:
     int id{-1};
     int model{Seven};
+    int driverId{-1};
     int type{Economy};
     int location{Chernobyl};
     int color{Cherry};
+    bool isValidated{false};
     string number{};
     int freeBottleOfWater = 0;
 
-    inline Car(int model=Seven, int type=Economy, int location = Chernobyl, int color = Cherry, string number = "AAA228AAA", int freeBottleOfWater = 0)
-            : model(model), type(type), location(location), color(color), number(move(number)),
-              freeBottleOfWater(freeBottleOfWater) {
-        if(type != Comfort) {
-            freeBottleOfWater = 0;
-        }
-    }
+    explicit Car(int model=Seven, int type=Economy, int location = Chernobyl, int color = Cherry, int freeBottleOfWater = 0);
 
     void drive(int to);
 private:
+    string generateNumber();
     void park();
     void parkRightInFrontOfTheEntrance();
     void parkSeveralBlocksAway();

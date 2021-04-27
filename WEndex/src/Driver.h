@@ -19,10 +19,10 @@ public:
     string name;
     double rating{5.0};
     int status{NotWorking};
-    int carId;
+    int currentlyUsedCarId;
     string login;
     string password;
-    inline Driver(string name, string login, string password, int carId) : name(move(name)), login(move(login)), password(move(password)), carId(carId) {}
+    inline Driver(string name, string login, string password, int carId) : name(move(name)), login(move(login)), password(move(password)), currentlyUsedCarId(carId) {}
     inline Driver() = default;
 };
 

@@ -36,3 +36,25 @@ void Car::parkSeveralBlocksAway() {
     cout << "Sorry, the car is " << rand() % 3 + 1 << " blocks away from the destination." << endl;
 }
 
+string Car::generateNumber() {
+    string number{};
+    const string CAPS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    for (int i = 0; i < 3; ++i) {
+        number+=CAPS[rand()%(CAPS.size() - 1)];
+    }
+    for (int i = 0; i < 3; ++i) {
+        number+=to_string(rand()%10);
+    }
+    return number;
+}
+
+Car::Car(int model, int type, int location, int color, int freeBottleOfWater)
+        : model(model), type(type), location(location), color(color),
+          freeBottleOfWater(freeBottleOfWater) {
+    if (type != Comfort) {
+        freeBottleOfWater = 0;
+    }
+    number = generateNumber();
+}
+
+
