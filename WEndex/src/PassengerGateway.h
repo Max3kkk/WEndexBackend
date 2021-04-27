@@ -5,6 +5,7 @@
 #ifndef WENDEX_PASSENGERGATEWAY_H
 #define WENDEX_PASSENGERGATEWAY_H
 #define st DataBase::Storage
+
 #include "string"
 #include "DataBase.h"
 #include "Car.h"
@@ -17,8 +18,10 @@
 
 class PassengerGateway {
 public:
-    void Register(const string& name, const string& login, const string& password);
-    Passenger Login(const string& login, const string& password);
+    void Register(const string &name, const string &login, const string &password);
+
+    Passenger Login(const string &login, const string &password);
+
     vector<Order> SeeOrderHistory(int passengerId);
 
     vector<struct PinnedAddress> SeePinedAddresses(int passengerId);
@@ -43,6 +46,13 @@ public:
 
     bool CheckBlockedMethod(int passengerId, int type);
 
+    void SwitchDevice(int passengerId, int deviceId);
+
+    Device addDevice(int passengerId, int OS, string name);
+
+    void removeDevice(int passengerId, int deviceId);
+
+private:
     bool CanAddPaymentMethod(int passengerId);
 
     bool CanRemovePaymentMethod(int passengerId);
@@ -50,12 +60,6 @@ public:
     bool CanMakeOrder(int passengerId);
 
     bool CanAskForBill(int passengerId);
-
-    void SwitchDevice(int passengerId, int deviceId);
-
-    Device addDevice(int passengerId, int OS, string name);
-
-    void removeDevice(int passengerId, int deviceId);
 };
 
 

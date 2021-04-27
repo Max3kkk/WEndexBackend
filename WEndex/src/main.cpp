@@ -11,7 +11,7 @@ using namespace std;
 using namespace sqlite_orm;
 #define st DataBase::Storage
 
-void ClearStorage(){
+void ClearStorage() {
     st.remove_all<Driver>();
     st.remove_all<Car>();
     st.remove_all<Passenger>();
@@ -45,7 +45,7 @@ int main() {
     pg.Register("Nickolas", "moon", "moon");
     pg.Register("Talya", "animka", "mydrdate");
     auto pIgor = pg.Login("m8pie", "pass");
-    auto pNicolas= pg.Login("moon", "moon");
+    auto pNicolas = pg.Login("moon", "moon");
     auto pTalya = pg.Login("animka", "mydrdate");
 
     // Admin
@@ -76,12 +76,30 @@ int main() {
     pg.removePaymentMethod(pNicolas.id, Cash);
     pg.SeePaymentMethods(pNicolas.id);
 
-    pg.addPinnedAddress(pNicolas.id,Moscow);
-    pg.addPinnedAddress(pNicolas.id,Kazan);
-    pg.removePinnedAddress(pNicolas.id,Kazan);
+    pg.addPinnedAddress(pNicolas.id, Moscow);
+    pg.addPinnedAddress(pNicolas.id, Kazan);
+    pg.removePinnedAddress(pNicolas.id, Kazan);
     pg.SeePinedAddresses(pNicolas.id);
-    pg.makeOrder(pNicolas.id, OrganTrade, ComfortPlus, Moscow, Innopolis);
 
+    auto ord = pg.makeOrder(pNicolas.id, OrganTrade, ComfortPlus, Moscow, Innopolis);
+    pg.printCurrentCoordinates(pNicolas.id);
 
+    ag.ValidateCar(aBoss.id, dMikhail.id);
+    ag.BlockMethod(aBoss.id, dVladimir.id, FindAllAvailableOrders);
+    ag.BlockMethod(aBoss.id, dVladimir.id, UpgradeCurrentCar);
+    ag.UnBlockMethod(aBoss.id, dVladimir.id, UpgradeCurrentCar);
+
+    dg.doRandomAvailableOrder(dMikhail.id);
+    dg.SeeOrderHistory(dMikhail.id);
+    pg.askForBill(pNicolas.id);
+    pg.SeeOrderHistory(pNicolas.id);
+
+    ag.seeAllCars(aBoss.id);
+    ag.seeAllDevices(aBoss.id);
+    ag.seeAllDrivers(aBoss.id);
+    ag.seeAllOrders(aBoss.id);
+    ag.seeAllPassengers(aBoss.id);
+    ag.seeAllPaymentMethods(aBoss.id);
+    ag.seeBlockedMethods(aBoss.id);
     return 0;
 }

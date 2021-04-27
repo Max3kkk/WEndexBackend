@@ -118,6 +118,8 @@ void AdminGateway::BlockMethod(int adminId, int userId, int methodType) {
     if (!st.count<BlockedMethod>(where(c(&BlockedMethod::userId) == userId && c(&BlockedMethod::type) == methodType))) {
         st.insert(BlockedMethod(methodType, userId));
     }
+    auto adm = st.get<Admin>(adminId);
+    cout << "Admin " << adm.name << " blocked method " << methodType << " for user with id:" << userId << endl;
 }
 
 void AdminGateway::UnBlockMethod(int adminId, int userId, int methodType) {
@@ -125,8 +127,18 @@ void AdminGateway::UnBlockMethod(int adminId, int userId, int methodType) {
         throw NotAdmin();
     }
     st.remove_all<BlockedMethod>(where(c(&BlockedMethod::userId) == userId && c(&BlockedMethod::type) == methodType));
+    auto adm = st.get<Admin>(adminId);
+    cout << "Admin " << adm.name << " unblocked method " << methodType << " for user with id:" << userId << endl;
 }
 
 bool AdminGateway::IsAdmin(int adminId) {
     return st.count<Admin>(where(c(&Admin::id) == adminId));
+}
+
+void AdminGateway::ValidateCar(int adminId, int carId) {
+    auto adm = st.get<Admin>(adminId);
+    auto car = st.get<Car>(carId);
+    car.isValidated = true;
+    st.update(car);
+    cout << "Admin " << adm.name << " validated car " << st.dump(car) << endl;
 }

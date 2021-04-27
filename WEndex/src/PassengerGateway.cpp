@@ -54,7 +54,7 @@ vector<PinnedAddress> PassengerGateway::SeePinedAddresses(int passengerId) {
 
 void PassengerGateway::removePinnedAddress(int passengerId, int address) {
     st.remove_all<PinnedAddress>(
-            where(c(&PinnedAddress::passengerId) == passengerId) && c(&PinnedAddress::address) == address);
+            where(c(&PinnedAddress::passengerId) == passengerId && c(&PinnedAddress::address) == address));
     cout << "Passenger removed address" << endl;
 }
 
@@ -128,12 +128,17 @@ void PassengerGateway::switchPaymentType(int passengerId, int paymentType) {
 int PassengerGateway::printCurrentCoordinates(int passengerId) {
     auto pt = st.get<Passenger>(passengerId);
     auto orders = st.get_all<Order>(
-            where(c(&Order::passengerId) == passengerId && c(&Order::status) != (int) LookingForDriver &&
+            where(c(&Order::passengerId) == passengerId &&
                   c(&Order::status) != (int) Finished));
     if (orders.size() == 1) {
-        auto car = st.get<Car>(st.get<Driver>(orders[0].driverId).currentlyUsedCarId);
-        cout << "Location of passenger " << pt.name << " is: " << car.location << endl;
-        return car.location;
+        if(st.count<Driver>(orders[0].driverId)) {
+            auto car = st.get<Car>(st.get<Driver>(orders[0].driverId).currentlyUsedCarId);
+            cout << "Location of passenger " << pt.name << " is: " << car.location << endl;
+            return car.location;
+        } else {
+            cout << "Location of passenger " << pt.name << " is: " << orders[0].fromAddress << endl;
+            return orders[0].fromAddress;
+        }
     } else {
         throw LocationIsNotSpecified();
     }

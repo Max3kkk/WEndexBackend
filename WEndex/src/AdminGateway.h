@@ -40,6 +40,8 @@ public:
     vector<Passenger> seeAllPassengers(int adminId);
 
     bool IsAdmin(int adminId);
+
+    void ValidateCar(int adminId, int carId);
 };
 
 
