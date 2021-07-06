@@ -18,10 +18,9 @@
 
 class DriverGateway {
 public:
-    void Register(const string& name, const string& login, const string& password);
-    Driver Login(const string& login, const string& password);
+    void Register(const string &name, const string &login, const string &password);
 
-    Car UpgradeCar(int driverId, int model, int type, int location, int color, string number);
+    Driver Login(const string &login, const string &password);
 
     vector<Order> SeeOrderHistory(int driverId);
 
@@ -33,7 +32,22 @@ public:
 
     void GetOrder(int driverId, int OrderId);
 
-    void doAvailableOrder(int driverId);
+    void doRandomAvailableOrder(int driverId);
+
+    Car UpgradeCar(int driverId, int model, int type, int color);
+
+    Car AddNewCar(int driverId, int model, int type, int color);
+
+    Car SwitchCar(int driverId, int carId);
+
+private:
+    bool CarValid(int driverId);
+
+    bool CanAcceptRide(int driverId);
+
+    bool CanUpgradeCar(int driverId);
+
+    bool CanFindAvailableOrders(int driverId);
 };
 
 

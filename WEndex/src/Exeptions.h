@@ -39,4 +39,27 @@ class HasNoSuchPaymentMethod: public exception {
     }
 };
 
+class BlockedFunction: public exception {
+    virtual const char* what() const throw() {
+        return "This function was blocked by an admin";
+    }
+};
+
+class CarIsInvalidated: public exception {
+    virtual const char* what() const throw() {
+        return "The car was not validated by an admin.";
+    }
+};
+
+class NotAdmin: public exception {
+    virtual const char* what() const throw() {
+        return "You are not an admin, you cannot use this functionality.";
+    }
+};
+
+class WrongCar: public exception {
+    virtual const char* what() const throw() {
+        return "You cannot access this car, it does not belong to you";
+    }
+};
 #endif //WENDEX_EXEPTIONS_H

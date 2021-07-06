@@ -4,18 +4,24 @@
 #include "PassengerGateway.h"
 #include "Passenger.h"
 #include "DriverGateway.h"
+#include "AdminGateway.h"
 #include <sqlite_orm/sqlite_orm.h>
 
 using namespace std;
 using namespace sqlite_orm;
 #define st DataBase::Storage
 
-void ClearStorage(){
+void ClearStorage() {
     st.remove_all<Driver>();
     st.remove_all<Car>();
     st.remove_all<Passenger>();
     st.remove_all<Order>();
     st.remove_all<PaymentMethod>();
+    st.remove_all<PinnedAddress>();
+    st.remove_all<Car>();
+    st.remove_all<Device>();
+    st.remove_all<BlockedMethod>();
+    st.remove_all<Admin>();
 }
 
 int main() {
@@ -23,51 +29,77 @@ int main() {
     st.sync_schema();
     PassengerGateway pg;
     DriverGateway dg;
+    AdminGateway ag;
 
     ClearStorage();
-
+    //Drivers
     dg.Register("Ivan Konyukhov", "Lapochka", "12345Drop");
     dg.Register("Mikhail", "Fedorov", "azaza");
     dg.Register("Vladimir", "Vova", "12345Drop");
-    dg.Register("De Baby", "dad", "124");
-    dg.Register("Dandy", "playStation", "game");
-    dg.Register("Succi", "devilslaver337", "italian");
+    auto dIvan = dg.Login("Lapochka", "12345Drop");
+    auto dMikhail = dg.Login("Fedorov", "azaza");
+    auto dVladimir = dg.Login("Vova", "12345Drop");
 
-    int ivID = dg.Login("Lapochka", "12345Drop").id;
-    int miID = dg.Login("Fedorov", "azaza").id;
-    int vlID = dg.Login("Vova", "12345Drop").id;
-    int deID = dg.Login("dad", "124").id;
-    int daID = dg.Login("playStation", "game").id;
-    int suID = dg.Login("devilslaver337", "italian").id;
+    //Passengers
+    pg.Register("Igor", "m8pie", "pass");
+    pg.Register("Nickolas", "moon", "moon");
+    pg.Register("Talya", "animka", "mydrdate");
+    auto pIgor = pg.Login("m8pie", "pass");
+    auto pNicolas = pg.Login("moon", "moon");
+    auto pTalya = pg.Login("animka", "mydrdate");
 
-    dg.ChangeStatus(ivID, Available);
-    dg.ChangeStatus(miID, Available);
-    dg.ChangeStatus(vlID, Available);
-    dg.ChangeStatus(deID, Available);
-    dg.ChangeStatus(daID, Available);
-    dg.ChangeStatus(suID, Available);
+    // Admin
+    ag.Register("Boss", "godPrayer", "smthHere");
+    auto aBoss = ag.Login("godPrayer", "smthHere");
 
-    dg.UpgradeCar(ivID,BMW,Economy,Moscow,Red,"AZA765ZZA");
-    dg.UpgradeCar(miID,Porsche,Business,Berlin,Black,"AZA765ZZA");
-    dg.UpgradeCar(vlID,Honda,Comfort,Kazan,Red,"AZA765ZZA");
-    dg.UpgradeCar(deID,Volkswagen,Economy,Paris,White,"AZA765ZZA");
-    dg.UpgradeCar(daID,Toyota,ComfortPlus,London,Cold,"AZA765ZZA");
-    dg.UpgradeCar(suID,MercedesBenz,Comfort,Sydney,Blue,"AZA765ZZA");
+    dg.ChangeStatus(dIvan.id, Available);
+    dg.ChangeStatus(dMikhail.id, Available);
+    dg.ChangeStatus(dVladimir.id, Available);
 
-    pg.Register("Ivan Konyukhov PAS", "a", "1");
-    pg.Register("Mikhail PAS", "b", "2");
-    pg.Register("Vladimir PAS", "c", "3");
-    pg.Register("De Baby PAS", "d", "4");
-    pg.Register("Dandy PAS", "e", "5");
-    pg.Register("Succi PAS", "i", "6");
+    dg.UpgradeCar(dIvan.id, BMW, Economy, Red);
+    dg.UpgradeCar(dMikhail.id, Porsche, Business, Black);
+    dg.UpgradeCar(dVladimir.id, Honda, Comfort, Red);
 
-    int iID = pg.Login("a", "1").id;
-    int mID = pg.Login("b", "2").id;
-    int vID = pg.Login("c", "3").id;
-    int dID = pg.Login("d", "4").id;
-    int ddID = pg.Login("e", "5").id;
-    int sID = pg.Login("i", "6").id;
-    //.....
+    dg.SeeCar(dVladimir.id);
 
+    auto carId = dg.AddNewCar(dMikhail.id, Honda, ComfortPlus, Gold).id;
+    dg.SwitchCar(dMikhail.id, carId);
+    dg.SeeCar(dMikhail.id);
+
+    auto devIg1 = pg.addDevice(pIgor.id, Avrora, "MyInternshipDevice");
+    auto devIg2 = pg.addDevice(pIgor.id, Windows, "GamingLaptop");
+    pg.SwitchDevice(pIgor.id, devIg1.id);
+    pg.removeDevice(pIgor.id, devIg2.id);
+
+    pg.addPaymentMethod(pNicolas.id, OrganTrade);
+    pg.switchPaymentType(pNicolas.id, OrganTrade);
+    pg.removePaymentMethod(pNicolas.id, Cash);
+    pg.SeePaymentMethods(pNicolas.id);
+
+    pg.addPinnedAddress(pNicolas.id, Moscow);
+    pg.addPinnedAddress(pNicolas.id, Kazan);
+    pg.removePinnedAddress(pNicolas.id, Kazan);
+    pg.SeePinedAddresses(pNicolas.id);
+
+    auto ord = pg.makeOrder(pNicolas.id, OrganTrade, ComfortPlus, Moscow, Innopolis);
+    pg.printCurrentCoordinates(pNicolas.id);
+
+    ag.ValidateCar(aBoss.id, dMikhail.id);
+    ag.BlockMethod(aBoss.id, dVladimir.id, FindAllAvailableOrders);
+    ag.BlockMethod(aBoss.id, dVladimir.id, UpgradeCurrentCar);
+    ag.UnBlockMethod(aBoss.id, dVladimir.id, UpgradeCurrentCar);
+
+    dg.doRandomAvailableOrder(dMikhail.id);
+    dg.SeeOrderHistory(dMikhail.id);
+    pg.askForBill(pNicolas.id);
+    pg.SeeOrderHistory(pNicolas.id);
+
+    ag.seeAllCars(aBoss.id);
+    ag.seeAllDevices(aBoss.id);
+    ag.seeAllDrivers(aBoss.id);
+    ag.seeAllOrders(aBoss.id);
+    ag.seeAllPassengers(aBoss.id);
+    ag.seeAllPaymentMethods(aBoss.id);
+    ag.seeBlockedMethods(aBoss.id);
     return 0;
 }
